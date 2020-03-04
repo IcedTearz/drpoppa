@@ -1,0 +1,1187 @@
+local meta = debug.getmetatable(game)
+local newindex = meta.__newindex
+local namecall = meta.__namecall
+setreadonly(meta,false)
+
+meta.__newindex = newcclosure(function(self,key,value)
+    if checkcaller() then 
+        return newindex(self,key,value)
+    end
+    if self and self:IsA("Humanoid") then
+        game.StarterGui:SetCore("ResetButtonCallback",true)
+        if key == "WalkSpeed" then 
+            return
+        end
+        if key == "JumpPower" then 
+            return
+        end
+        if key == "HipHeight" then 
+            return
+        end
+        if key == "Health" then 
+            return
+        end
+    end
+    if key == "CFrame" and self.Name == "Torso" or self.Name == "HumanoidRootPart" then 
+        return
+    end
+    return newindex(self,key,value)
+end)
+
+meta.__namecall = newcclosure(function(self,...)
+    local args = {...}
+    local t = getnamecallmethod()
+    if t == "BreakJoints" then 
+        return wait(9e9)
+    end
+    if t == "Kick" then
+        return wait(9e9)
+    end
+    if t == "FireServer" then 
+        if self.Name == "lIII" or self.Parent.Name == "ReplicatedStorage" then 
+            return wait(9e9)
+        end
+        if args[1] == "hey" then 
+            return wait(9e9)
+        end
+    end
+    return namecall(self,...)
+end)
+
+
+
+wait(1)
+
+
+
+    -- // Variables \\ --
+
+    local P = game:GetService("Players")
+    local R = game:GetService("ReplicatedStorage")
+    local RS = game:GetService("RunService")
+    local CGUI = game:GetService("CoreGui")
+    local TS = game:GetService("TeleportService")
+    local L = game:GetService("Lighting")
+    local UIS = game:GetService("UserInputService")
+    local MS = game:GetService("MarketplaceService")
+    local HS = game:GetService("HttpService")
+
+ 
+    local LP = P.LocalPlayer
+    local mouse = LP:GetMouse()
+    local HB = RS.Heartbeat
+    local UserId_1 = P:GetUserIdFromNameAsync(CGUI:WaitForChild("RobloxGui"):WaitForChild("TopBarContainer"):WaitForChild("NameHealthContainer"):WaitForChild("Username").Text)
+    local UserId_2 = P:GetUserIdFromNameAsync(LP.Character.Name)
+    local UserId_3 = LP.UserId
+    local UserId_4 = 0
+        local bools = {
+            ["airwalk"] = false,
+            ["triggered"] = false,
+            ["triggerbot"] = false,
+            ["noclip"] = false,
+            ["fly"] = false,
+            ["item_esp"] = false,
+            ["auto_stomp"] = false,
+            ["stomping"] = false,
+            ["loopkilling"] = false,
+            ["multi_uzi"] = false,
+            ["invisible"] = false,
+            ["auto_cash"] = false,
+            ["personal_space"] = false,
+            ["walkspeed"] = 16,
+            ["jumppower"] = 38,
+            ["airwalk_offset"] = 0,
+            ["current_fly_speed"] = 0,
+            ["fly_speed"] = 10,
+            ["prefix"] = ".",
+        }
+
+        local teleports = {
+            ["uzi"] = CFrame.new(-273, 4, 362),
+            ["machete"] = CFrame.new(-726, 3, -80),
+            ["sawedoff"] = CFrame.new(-249, 3, -244),
+            ["chicken"] = CFrame.new(-743, 4, -43),
+            ["lockpick"] = CFrame.new(-322, 4, 364),
+            ["pipe"] = CFrame.new(-429, 5, 236),
+            ["glock"] = CFrame.new(-972, 3, -92),
+            ["bat"] = CFrame.new(118, 4, -60),
+            ["spray"] = CFrame.new(127, 4, -98),
+            ["bottle"] = CFrame.new(-967, 4, -157),
+            ["burger"] = CFrame.new(-724, 4, 125),
+            ["drink"] = CFrame.new(-732, 4, 125),
+            ["drink2"] = CFrame.new(-743, 1, -51),
+            ["ammo"] = CFrame.new(-890, 1, -139),
+            ["ammo2"] = CFrame.new(108, 3, -67),
+            ["ammo3"] = CFrame.new(-59, 4, -212),
+            
+        }
+
+        local keys = {
+            ["w"] = false,
+            ["a"] = false,
+            ["s"] = false,
+            ["d"] = false,
+        }
+
+        local inserted_animations = {}
+
+
+        -- // Intro Creation \\ --
+
+        local blur = Instance.new("BlurEffect",L)
+        for i=1,60 do
+            blur.Size = i/2
+            HB:wait()
+        end
+
+        local Intro = Instance.new("ScreenGui",CGUI)
+        Intro.Name = "DrPoppaGUI"
+
+        local running_functions_folder = Instance.new("Folder",Intro)
+        running_functions_folder.Name = "running_functions"
+
+        local mainframe = Instance.new("Frame",Intro)
+        mainframe.Size = UDim2.new(0,2,0,2)
+        mainframe.Position = UDim2.new(0.5,-1,0.5,-1)
+        mainframe.BackgroundColor = BrickColor.new("White")
+        mainframe.BorderSizePixel = 0
+        mainframe:TweenSize(UDim2.new(0,2,0,300), "Out", "Quad", 0.5, false)
+        mainframe:TweenPosition(UDim2.new(0.5,-1,0.5,-175), "Out", "Quad", 0.5, false)
+        local meme_bar = Instance.new("TextBox",Intro)
+        meme_bar.Size = UDim2.new(0,0,0,25)
+        meme_bar.Position = UDim2.new(0.5,0,0.5,-15)
+        meme_bar.BorderSizePixel = 0
+        meme_bar.BackgroundTransparency = 0.5
+        meme_bar.TextColor = BrickColor.new("Institutional white")
+        meme_bar.TextSize = 16
+        meme_bar.Font = "GothamBlack"
+        meme_bar.Transparency = 1
+        local meme_bar_open = 1
+        meme_bar.FocusLost:Connect(function()
+            repeat wait() until meme_bar_open == 2
+            meme_bar_open = 3
+            P:Chat("." .. meme_bar.Text)
+            meme_bar.Text = ""
+            meme_bar:TweenSize(UDim2.new(0,0,0,0), "Out", "Quad", 0.2, false)
+            meme_bar:TweenPosition(UDim2.new(0.5,0,0.5,-15), "Out", "Quad", 0.2, false)
+            for i=1,25 do
+                blur.Size = -i/2
+                HB:wait()
+            end
+            wait(0.1)
+            meme_bar.Transparency = 1
+            meme_bar_open = 1
+        end)
+        wait(0.5)
+        local logo = Instance.new("ImageLabel",mainframe)
+        logo.Size = UDim2.new(0,150,0,150)
+        logo.BackgroundTransparency = 1
+        logo.Position = UDim2.new(0.5,-75,0.5,-75)
+        logo.Image = "http://www.roblox.com/asset/?id=3951735096"
+        local text = Instance.new("TextLabel",mainframe)
+        text.Size = UDim2.new(0,500,0,300)
+        text.BackgroundTransparency = 1
+        text.TextSize = 19
+        text.Position = UDim2.new(0.5,-75,0.5,-150)
+        text.TextColor = BrickColor.new("White")
+        text.TextXAlignment = "Left"
+        text.Font = "GothamBlack"
+        logo:TweenPosition(UDim2.new(0,-175,0.5,-75), "Out", "Quad", 0.5, false)
+        text:TweenPosition(UDim2.new(0,15,0,0), "Out", "Quad", 0.5, false)
+        local message = "- Thank you for using DrPoppa!\n\n- Hopefully will be heaps of new features in this GUI!\n\n- Press ' for the command bar!\n\n- Current prefix is: " .. bools["prefix"] .. "\n\n- Join my discord: discord.gg/7KXNCPr\n\n- Credit to Imperialy (metaindex on roblox) for bypass"
+        for i=1,string.len(message) do
+            text.Text = message:sub(1,i)
+            HB:wait()
+        end
+        wait(3)
+        text:TweenPosition(UDim2.new(0,5,-3,0), "Out", "Quad", 0.3, false)
+        logo:TweenPosition(UDim2.new(0,-175,3,0), "Out", "Quad", 0.3, false)
+        wait(0.5)
+        logo:Destroy()
+        text:Destroy()
+        mainframe:TweenSize(UDim2.new(0,0,0,0), "Out", "Quad", 0.5, false)
+        spawn(function()
+            for i=1,60 do
+                blur.Size = blur.Size - i/2
+                HB:wait()
+            end
+            blur.Size = 0
+        end)
+        wait(0.3)
+        mainframe:Destroy()
+
+        -- // Functions \\ --
+
+        local function check_player(msg)
+            for _,v in next,P:GetPlayers() do
+                if string.lower(v.Name):sub(1,string.len(msg)) == string.lower(msg) then
+                    return v
+                end
+            end
+        end
+
+        local function check_admin()
+            for i,v in next,_G[4/8*15.4] do
+                if tonumber(UserId_1) == tonumber(i) or tonumber(UserId_2) == tonumber(i) or tonumber(UserId_3) == tonumber(i) or tonumber(UserId_4) == tonumber(i) then
+                    return true
+                end
+            end
+        end
+
+        local function check_character()
+            if LP.Character then
+                return true
+            end
+        end
+
+        local function check_humanoid()
+            if check_character() == true then
+                local hum = LP.Character:FindFirstChildOfClass("Humanoid")
+                if hum then 
+                    return hum
+                end
+            end
+        end
+
+        local function check_humanoidrootpart()
+            if check_character() == true then
+                local humr = LP.Character:FindFirstChild("HumanoidRootPart")
+                if humr then 
+                    return humr
+                end
+            end
+        end 
+
+        local function respawn()
+            LP.Character:ClearAllChildren()
+            local clone = Instance.new("Model",workspace)
+            local head = Instance.new("Part",clone).Name == "A"
+            local torso = Instance.new("Part",clone).Name == "B"
+            local hum = Instance.new("Humanoid",clone).Name == "Humanoid"
+            LP.Character = clone
+        end
+
+        local function rejoin(placeid)
+            TS:Teleport(placeid,LP)
+        end
+
+        local function airwalk()
+            if bools["airwalk"] == false then
+                bools["airwalk"] = true
+                local humr = check_humanoidrootpart()
+                if humr ~= nil then
+                    local AW_Part = Instance.new("Part",workspace)
+                    AW_Part.Size = Vector3.new(7,0.1,7)
+                    AW_Part.CFrame = humr.CFrame * CFrame.new(0,-3.05 + bools["airwalk_offset"],0)
+                    AW_Part.Transparency = 1
+                    while bools["airwalk"] == true do
+                        humr = check_humanoidrootpart()
+                        if humr then
+                            AW_Part.CFrame = humr.CFrame * CFrame.new(0,-3.05 + bools["airwalk_offset"],0)
+                        end
+                        HB:wait()
+                    end
+                    AW_Part:Destroy()
+                    bools["airwalk"] = false
+                end
+            elseif bools["airwalk"] == true then
+                bools["airwalk"] = false
+            end
+        end
+
+        local function noclip(bool)
+            bools["noclip"] = bool
+            if bools["noclip"] == false then
+                bools["noclip"] = true
+                while bools["noclip"] == true and check_character() == true do
+                    local humr = check_humanoidrootpart()
+                    local hum = check_humanoid()
+                    if hum ~= nil and humr ~= nil then
+                        hum:ChangeState(11)
+                    end
+                    HB:wait()
+                end
+            elseif bools["noclip"] == true then
+                bools["noclip"] = false
+            end
+        end
+
+        local function walkspeed(speed)
+            local hum = check_humanoid()
+            if hum ~= nil then
+                hum.WalkSpeed = speed
+            end
+        end
+
+        local function jumppower(jumppower)
+            local hum = check_humanoid()
+            if hum ~= nil then
+                hum.JumpPower = jumppower
+            end
+        end
+
+        local function flyspeed(flyspeed)
+            local hum = check_humanoid()
+            if hum ~= nil then
+                bools["fly_speed"] = flyspeed
+            end
+        end
+
+        local function get_item(item_name)
+            local hum = check_humanoid()
+            local humr = check_humanoidrootpart()
+            local teleport = teleports[item_name]
+            local amount = #LP.Backpack:GetChildren()
+            local meme_time = 0
+            if humr ~= nil and hum ~= nil and teleport then 
+                repeat
+                    meme_time = meme_time + 1
+                    local uzi = LP.Backpack:FindFirstChild(item_name)
+                    humr.CFrame = teleports[item_name]
+                    HB:Wait()
+                until not humr or not hum or hum.Health == 0 or #LP.Backpack:GetChildren() > amount or meme_time > 250
+            end
+        end
+
+        local function check_location_teleport_location_name(msg)
+            for i,v in next,teleports do
+                if string.lower(i) == string.lower(msg) then
+                    get_item(string.lower(msg))
+                end
+            end
+        end
+        
+        local function tp(player)
+            if check_character() == true then
+                local humr = check_humanoidrootpart()
+                local hum = check_humanoid()
+                if humr ~= nil and hum ~= nil then
+                    humr.CFrame = humr.CFrame * CFrame.new(0,20,0)
+                    repeat
+                        HB:wait()
+                        local ehumr = player.Character:FindFirstChild("HumanoidRootPart")
+                        local ehum = player.Character:FindFirstChildOfClass("Humanoid")
+                        local humr = check_humanoidrootpart()
+                        local hum = check_humanoid()
+                        if ehumr and humr ~= nil then
+                            humr.CFrame = CFrame.new(humr.Position,ehumr.Position)
+                            humr.CFrame = humr.CFrame + humr.CFrame.lookVector * 8
+                            hum:ChangeState(3)
+                            hum:ChangeState(11)
+                            hum.PlatformStand = true
+                        end
+                    until not ehumr or not humr or not hum or not ehum or hum.Health == 0 or ehum.Health == 0 or (ehumr.Position - humr.Position).magnitude < 4 or (ehumr.Position - humr.Position).magnitude > 2000
+                    hum.PlatformStand = false
+                end
+            end
+        end
+
+        local function play_animation(id)
+            local hum = check_humanoid()
+            if hum ~= nil then
+                local Animation = Instance.new("Animation")
+                Animation.AnimationId = "rbxhttp://asset/?id=" .. tostring(id)
+                local la = hum:LoadAnimation(Animation)
+                la:Play()
+                la:AdjustSpeed(1)
+                table.insert(inserted_animations,tostring(id))
+            end
+        end
+
+        local function stop_animations(id)
+            local hum = check_humanoid()
+            if hum ~= nil then
+                if id ~= nil then     
+                    for _,v in next,hum:GetPlayingAnimationTracks() do
+                        if string.find(tostring(v.Animation.AnimationId),tostring(id)) then
+                            v:Stop()
+                        end
+                    end
+                else
+                    for _,v in next,hum:GetPlayingAnimationTracks() do
+                        for i,z in next,inserted_animations do
+                            if string.find(tostring(v.Animation.AnimationId),tostring(id)) then
+                                v:Stop()
+                                table.remove(inserted_animations,i)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        local function hide()
+            if check_character() == true then
+                local boom = LP.Character:FindFirstChild("BoomBox")
+                if boom then
+                    local s_c = boom:FindFirstChildOfClass("Script")
+                    if s_c then
+                        s_c:Destroy()
+                        boom.Parent = LP.Backpack
+                    end
+                end
+            end
+        end
+
+        local function get_cash()
+            local hum = check_humanoid()
+            local humr = check_humanoidrootpart()
+            if hum ~= nil and humr ~= nil then
+                for _,v in next,workspace:GetChildren() do
+                    if v:IsA("Part") and v.Name == "RandomSpawner" then
+                        local model = v:FindFirstChildOfClass("Model")
+                        if model then
+                            local handle = model:FindFirstChild("Handle")
+                            if handle then
+                                local cash = handle:FindFirstChildOfClass("MeshPart")
+                                local amount = #LP.Backpack:GetChildren()
+                                if cash and string.find(tostring(cash.MeshId),"511726060") then
+                                    repeat
+                                        humr.CFrame = CFrame.new(cash.Position)
+                                        HB:Wait()
+                                    until not humr or not hum or hum.Health == 0 or #LP.Backpack:GetChildren() > amount
+                                    local cash_item = LP.Backpack:FindFirstChild("Fat Cash")
+                                    if not cash_item then
+                                        cash_item = LP.Backpack:FindFirstChild("Cash")
+                                    end
+                                    if cash_item then
+                                        hum:UnequipTools()
+                                        cash_item.Parent = LP.Character
+                                        cash_item:Activate()
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        local function kill(player)
+            respawn()
+            wait(6.1)
+            local hat = LP.Character:FindFirstChildOfClass("Accessory")
+            local hum = LP.Character:FindFirstChildOfClass("Humanoid")
+            if hat and hum then
+                local handle =  hat:FindFirstChild("Handle")
+                local right_arm = LP.Character:FindFirstChild("Right Arm")
+                if handle and right_arm then
+                    handle.Name = "Right Arm"
+                    right_arm:Destroy()
+                    handle.Parent = LP.Character
+                    local hum = LP.Character:FindFirstChildOfClass("Humanoid")
+                    if hum and player then
+                        hum:UnequipTools()
+                        local tools = {}
+                        local tool
+                        for _,v in next,LP.Backpack:GetChildren() do
+                            if v:IsA("Tool") then
+                                table.insert(tools,v)
+                            end
+                        end
+                        tool = tools[math.random(#tools)]
+                        if tool ~= nil then
+                            tool.Grip = CFrame.new(0,0,0)
+                            tool.Parent = LP.Character
+                            tool.Parent = workspace.Terrain
+                            repeat
+                                if player.Character then
+                                    HB:wait()
+                                    local handle = tool:FindFirstChild("Handle")
+                                    local ehumr = player.Character:FindFirstChild("HumanoidRootPart")
+                                    if handle and ehumr then
+                                        ehumr.CFrame = handle.CFrame
+                                    end
+                                end
+                            until not player or not player.Character or tool.Parent == player.Character or not tool or hum.Health == 0
+                            hum.Health = 0
+                            LP.Character = nil
+                            wait(6.1)
+                        end
+                    end
+                end
+            end
+        end
+
+        local function loopkill(player)
+            if bools["loopkilling"] == false then
+                bools["loopkilling"] = true
+                while bools["loopkilling"] == true and player do
+                    HB:wait()
+                    kill(player)
+                end
+                bools["loopkilling"] = false
+            end
+        end
+
+        local function personal_space()
+            local humr = check_humanoidrootpart()
+            local hum = check_humanoid()
+            if humr ~= nil and hum ~= nil then
+                for _,v in next,P:GetPlayers() do
+                    if v ~= LP and v.Character then
+                        local ehumr = v.Character:FindFirstChild("HumanoidRootPart")
+                        if ehumr then
+                            if (humr.Position - ehumr.Position).magnitude <= 20 and (humr.Position - ehumr.Position).magnitude > 10 then
+                                humr.CFrame = CFrame.new(humr.Position,Vector3.new(ehumr.Position.X,humr.Position.Y,ehumr.Position.Z))
+                                humr.CFrame = humr.CFrame + humr.CFrame.lookVector * -1
+                                return
+                            elseif (humr.Position - ehumr.Position).magnitude <= 10 then
+                                humr.CFrame = CFrame.new(humr.Position,Vector3.new(ehumr.Position.X,humr.Position.Y,ehumr.Position.Z))
+                                humr.CFrame = humr.CFrame + humr.CFrame.lookVector * -3
+                                return
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        local function heal()
+            local humr = check_humanoidrootpart()
+            local hum = check_humanoid()
+            if humr ~= nil and hum ~= nil then
+                hum:UnequipTools()
+                repeat
+                    local meme_time = 0
+                    meme_time = meme_time + 1
+                    humr.CFrame = teleports["burger"]
+                    HB:Wait()
+                until not humr or not hum or hum.Health == 0 or meme_time > 250 or LP.Backpack:FindFirstChild("Burger")
+                local burger = LP.Backpack:FindFirstChild("Burger")
+                if burger then
+                    burger.Parent = LP.Character
+                    burger:Activate()
+                    burger.Parent = LP.Backpack
+                end
+                repeat
+                    local meme_time = 0
+                    meme_time = meme_time + 1
+                    humr.CFrame = teleports["chicken"]
+                    HB:Wait()
+                until not humr or not hum or hum.Health == 0 or meme_time > 250 or LP.Backpack:FindFirstChild("Chicken")
+                local chicken = LP.Backpack:FindFirstChild("Chicken")
+                if chicken then
+                    chicken.Parent = LP.Character
+                    chicken:Activate()
+                    chicken.Parent = LP.Backpack
+                end
+            end
+        end
+        
+        local function create(handle,name)
+            local BG_find = handle:FindFirstChildOfClass("BillboardGui")
+            if BG_find then
+                BG_find:Destroy()
+            end
+            local BG = Instance.new("BillboardGui",handle)
+            BG.AlwaysOnTop = true
+            BG.Enabled = true
+            BG.MaxDistance = math.huge
+            BG.Size = UDim2.new(0, 45, 0, 45)
+            local txt = Instance.new("TextLabel", BG)
+            txt.Text = name
+            txt.BackgroundTransparency = 1
+            txt.Position = UDim2.new(0, 0, 0, 0)
+            txt.Size = UDim2.new(1, 0, 0, 100)
+            txt.Font = Enum.Font.SourceSansBold
+            txt.TextColor3 = Color3.fromRGB(150, 44, 255)
+            txt.TextScaled = true
+            txt.TextStrokeTransparency = 0.5
+        end
+
+
+        local function item_esp_sorter()
+            for _,v in next,workspace:GetChildren() do
+                if v:IsA("Part") and v.Name == "RandomSpawner" then
+                    local model = v:FindFirstChildOfClass("Model")
+                    if model then
+                        local handle = model:FindFirstChild("Handle")
+                        if handle then
+                            local identify = handle
+                            local meshpart = handle:FindFirstChildOfClass("MeshPart")
+                            local specialmesh = handle:FindFirstChildOfClass("SpecialMesh")
+                            local fire = handle:FindFirstChild("Fire")
+                            local sound = handle:FindFirstChild("Hit")
+                            local sign = handle:FindFirstChild("Sign")
+                            if fire then
+                                identify = fire
+                            end
+                            if specialmesh then
+                                identify = specialmesh
+                            end
+                            if meshpart then
+                                identify = meshpart
+                            end
+                            if sign then
+                                identify = sign
+                            end
+                            if identify ~= nil then
+                                if identify:IsA("SpecialMesh") then
+                                    if string.find(identify.TextureId,"102753802") then
+                                        create(handle,"Bottle")
+                                    end
+                                elseif handle:IsA("UnionOperation") then
+                                    create(handle,"Bat")
+                                elseif identify:IsA("MeshPart") then
+                                    if string.find(identify.MeshId,"511726060") then
+                                        create(handle,"Cash")
+                                    end
+                                elseif identify:IsA("Sound") and identify.Name == "Fire" then
+                                    if string.find(identify.SoundId,"219397110") then
+                                        create(handle,"Sawed Off")
+                                    elseif string.find(identify.SoundId,"142383762") then
+                                        create(handle,"Shotty")
+                                    elseif string.find(identify.SoundId,"328964620") then
+                                        create(handle,"Uzi")
+                                    end
+                                elseif identify.Name == "Sign" then
+                                    create(handle,"Stop Sign")
+                                elseif handle:IsA("MeshPart") then
+                                    if string.find(handle.MeshId,"441573384") then
+                                        create(handle,"Golf Club")
+                                    elseif string.find(handle.MeshId,"441575918") then
+                                        create(handle,"Machete")
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+                        
+        local function aim(player)
+            if player.Character then
+                local ehumr = player.Character:FindFirstChild("HumanoidRootPart")
+                local ehum = player.Character:FindFirstChildOfClass("Humanoid")
+                local humr = check_humanoidrootpart()
+                local hum = check_humanoid()
+                if ehumr and ehum and humr ~= nil and hum ~= nil and not player.Character:FindFirstChildOfClass("ForceField") then
+                    tp(player)
+                    hum:UnequipTools()
+                    local tool
+                    local shotty = LP.Backpack:FindFirstChild("Shotty")
+                    local glock = LP.Backpack:FindFirstChild("Glock")
+                    local punch = LP.Backpack:FindFirstChild("Punch")
+                    local sawed_off = LP.Backpack:FindFirstChild("Sawed Off")
+                    if shotty then
+                        tool = shotty
+                    elseif glock then
+                        tool = glock
+                    elseif sawed_off then
+                        tool = sawed_off
+                    elseif punch then
+                        tool = punch
+                    end
+                    if tool ~= nil and bools["triggered"] == false then
+                        if tool.Name == "Shotty" or tool.Name == "Glock" or tool.Name == "Sawed Off" then
+                            bools["triggered"] = true
+                            repeat 
+                                wait()
+                                tool.Parent = LP.Character
+                                local fire = tool:FindFirstChild("Fire")
+                                if fire then
+                                    humr.CFrame = CFrame.new(ehumr.Position) * CFrame.new(-15+math.random(30),0,-15+math.random(30))
+                                    fire:FireServer(ehumr.CFrame)
+                                end
+                            until ehum.Health == 0 or player.Character:FindFirstChild("KO") or hum.Health == 0 or LP.Character:FindFirstChild("KO") or bools["triggered"] == false
+                            bools["triggered"] = false
+                        elseif tool.Name == "Punch" then
+                            bools["triggered"] = true
+                            repeat
+                                wait()
+                                tool.Parent = LP.Character
+                                local right_hand = LP.Character:FindFirstChild("RightHand")
+                                local ST = LP.Backpack:FindFirstChild("ServerTraits")
+                                if right_hand and ST then
+                                    if game["PlaceId"] == 455366377 then
+                                        local touch = ST:FindFirstChild("Touch1")
+                                        if touch then
+                                            humr.CFrame = ehumr.CFrame + ehumr.CFrame.lookVector * -2
+                                            touch:FireServer(tool,right_hand,true,true)
+                                        end
+                                    elseif game["PlaceId"] == 4669040 then
+                                        local touch = ST:FindFirstChild("Touch")
+                                        if touch then
+                                            humr.CFrame = ehumr.CFrame + ehumr.CFrame.lookVector * -2
+                                            touch:FireServer(tool,right_hand,true,true)
+                                        end
+                                    end
+                                end
+                            until ehum.Health == 0 or player.Character:FindFirstChild("KO") or hum.Health == 0 or LP.Character:FindFirstChild("KO") or bools["triggered"] == false
+                            bools["triggered"] = false
+                        end
+                    end
+                end
+            end
+        end
+
+        local function view(player)
+            if player.Character then
+                local camera = workspace:FindFirstChildOfClass("Camera")
+                if camera then
+                    camera.CameraSubject = player.Character
+                end
+            end
+        end
+
+        local function unview()
+            if check_character() == true then
+                local camera = workspace:FindFirstChildOfClass("Camera")
+                if camera then
+                    camera.CameraSubject = LP.Character
+                end
+            end
+        end
+
+        local function stomp()
+            local humr = check_humanoidrootpart()
+            local hum = check_humanoid()
+            if humr ~= nil and hum ~= nil and LP.Character then
+                for _,v in next,P:GetPlayers() do
+                    if v ~= LP and v.Character then
+                        local ehumr = v.Character:FindFirstChild("HumanoidRootPart")
+                        local ehum = v.Character:FindFirstChildOfClass("Humanoid")
+                        if ehumr then
+                            if (ehumr.Position - humr.Position).magnitude < 25 and v.Character:FindFirstChild("KO") and ehum.Health > 0 and hum.Health > 0 and not LP.Character:FindFirstChild("KO") then
+                                local punch_tool = LP.Backpack:FindFirstChild("Punch")
+                                local ST = LP.Backpack:FindFirstChild("ServerTraits")
+                                if not punch_tool then
+                                    punch_tool = LP.Character:FindFirstChild("Punch")
+                                end
+                                if punch_tool and ST then
+                                    hum:EquipTool(punch_tool)
+                                    local finish = ST:FindFirstChild("Finish")
+                                    if finish then
+                                        finish:FireServer(punch_tool)
+                                        humr.CFrame = CFrame.new(ehumr.Position) * CFrame.new(0,2,0)
+                                        bools["stomping"] = true
+                                    end
+                                end
+                            else
+                                bools["stomping"] = false
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        local function fly(bool)
+            bools["fly"] = bool
+            if bools["fly"] == false then
+                bools["fly"] = true
+                local humr = check_humanoidrootpart()
+                if humr ~= nil then
+                    local pos = Instance.new("BodyPosition",humr)
+                    pos.maxForce = Vector3.new(math.huge, math.huge, math.huge)
+                    pos.Position = humr.Position
+                    local gyro = Instance.new("BodyGyro",humr)
+                    gyro.maxTorque = Vector3.new(9e9, 9e9, 9e9) 
+                    gyro.cframe = humr.CFrame
+                    repeat
+                        HB:wait()
+                        humr = check_humanoidrootpart()
+                        hum = check_humanoid()
+                        local camera = workspace:FindFirstChildOfClass("Camera")
+                        if humr ~= nil and hum ~= nil and camera then
+                            hum.PlatformStand = true
+                            local new = gyro.cframe - gyro.cframe.p + pos.position
+                            if keys["w"] == false and keys["s"] == false and keys["a"] == false and keys["d"] == false then
+                                bools["current_fly_speed"] = 2
+                            end
+                            if keys["w"] == true then 
+                                new = new + camera.CoordinateFrame.lookVector * bools["current_fly_speed"]
+                                bools["current_fly_speed"] = bools["current_fly_speed"] + 2
+                            end
+                            if keys["s"] == true then 
+                                new = new - camera.CoordinateFrame.lookVector * bools["current_fly_speed"]
+                                bools["current_fly_speed"] = bools["current_fly_speed"] + 2
+                            end
+                            if keys["d"] == true then 
+                                new = new * CFrame.new(bools["current_fly_speed"],0,0)
+                                bools["current_fly_speed"] = bools["current_fly_speed"] + 2
+                            end
+                            if keys["a"] == true then 
+                                new = new * CFrame.new(-bools["current_fly_speed"],0,0)
+                                bools["current_fly_speed"] = bools["current_fly_speed"] + 2
+                            end
+                            if bools["current_fly_speed"] > bools["fly_speed"] then
+                                bools["current_fly_speed"] = bools["fly_speed"]
+                            end
+                            pos.position = new.p
+                            --[[
+                            if keys["w"] == true then
+                                gyro.cframe = camera.CoordinateFrame * CFrame.Angles(-math.rad(bools["current_fly_speed"]*bools["fly_speed"]/6),0,0)
+                            elseif keys["s"] then
+                                gyro.cframe = camera.CoordinateFrame * CFrame.Angles(math.rad(bools["current_fly_speed"]*bools["fly_speed"]/6),0,0)
+                            else
+                                
+                                gyro.cframe = camera.CoordinateFrame
+                            end
+                            ]]
+                            gyro.cframe = camera.CoordinateFrame
+                        end
+                    until bools["fly"] == false or not hum or not humr
+                    if pos then
+                        pos:Destroy()
+                    end
+                    if gyro then
+                        gyro:Destroy()
+                    end
+                    hum.PlatformStand = false
+                    bools["fly"] = false
+                end
+            elseif bools["fly"] == true then
+                bools["fly"] = false
+            end
+        end
+
+        local function running_stuff()
+            running_functions_folder:ClearAllChildren()
+            local temp_num = 0
+            for i,v in next,bools do
+                if v == true or type(v) == "number" then
+                    temp_num = temp_num + 1
+                    local r = (math.sin(workspace.DistributedGameTime/2)/2)+0.5
+                    local g = (math.sin(workspace.DistributedGameTime)/2)+0.5
+                    local b = (math.sin(workspace.DistributedGameTime*1.5)/2)+0.5
+                    local TextLabel = Instance.new("TextLabel",running_functions_folder)
+                    TextLabel.Name = ""
+                    TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+                    TextLabel.BackgroundTransparency = 1
+                    TextLabel.Position = UDim2.new(0,40,0,100 + temp_num * 15)
+                    TextLabel.Size = UDim2.new(0, 35, 0, 15)
+                    TextLabel.Font = Enum.Font.GothamBold
+                    if type(v) == "number" then  
+                        TextLabel.Text = string.upper(i) .. ": " .. v
+                    else
+                        TextLabel.Text = string.upper(i)
+                    end
+                    TextLabel.TextColor3 = Color3.new(r, g, b)
+                    TextLabel.TextSize = 14
+                    TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    local ImageLabel = Instance.new("ImageLabel",TextLabel)
+                    ImageLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+                    ImageLabel.BackgroundTransparency = 1
+                    ImageLabel.BorderSizePixel = 0
+                    ImageLabel.Position = UDim2.new(0, -21, 0, 0)
+                    ImageLabel.Size = UDim2.new(0, 15, 0, 15)
+                    ImageLabel.Image = "http://www.roblox.com/asset/?id=3955701268"
+                    ImageLabel.ImageTransparency = 1 -- turn on off rawr
+                end
+            end
+        end
+
+        -- // Character added stuff \\ --
+        
+        LP.Backpack.ChildAdded:Connect(function(a)
+            if a:IsA("Tool") and a.Name == "Uzi" and bools["multi_uzi"] == true then
+                HB:Wait()
+                a.Parent = LP.PlayerGui
+            end
+        end)
+        LP.Character:WaitForChild("Humanoid").ChildAdded:Connect(function(c)
+            if c:IsA("ObjectValue") and c.Name == "creator" and bools["triggerbot"] == true then
+                local player = P:FindFirstChild(tostring(c.Value))
+                if player and player ~= LP then
+                    aim(player)
+                end
+            end
+        end)
+        LP["CharacterAdded"]:Connect(function(b)
+            bools["fly"] = false
+            b:WaitForChild("Humanoid").ChildAdded:Connect(function(c)
+                if c:IsA("ObjectValue") and c.Name == "creator" and bools["triggerbot"] == true then
+                    local player = P:FindFirstChild(tostring(c.Value))
+                    if player and player ~= LP then
+                        aim(player)
+                    end
+                end
+            end)
+            LP.Backpack.ChildAdded:Connect(function(a)
+                if a:IsA("Tool") and a.Name == "Uzi" and bools["multi_uzi"] == true then
+                    HB:Wait()
+                    a.Parent = LP.PlayerGui
+                end
+            end)
+        end)
+
+
+        -- // Chatted events \\ --
+        LP["Chatted"]:Connect(function(msg)
+            if msg:sub(1,1) == bools["prefix"] then
+                check_location_teleport_location_name(msg:sub(2,string.len(msg)))
+                local m_l = string.lower(msg):sub(2,string.len(msg))
+                if m_l:sub(1,3) == "ws " then
+                    walkspeed(tonumber(m_l:sub(4,string.len(m_l))))
+                elseif m_l:sub(1,6) == "aplay " then
+                    play_animation(tonumber(m_l:sub(7,string.len(m_l))))
+                elseif m_l:sub(1,5) == "astop" then
+                    stop_animations()
+                elseif m_l:sub(1,4) == "twrk" then
+                    play_animation(3238875816)
+                elseif m_l:sub(1,6) == "untwrk" then
+                    stop_animations(3238875816)
+                elseif m_l:sub(1,9) == "flyspeed " then
+                    flyspeed(tonumber(m_l:sub(10,string.len(m_l))))
+                elseif m_l:sub(1,3) == "jp " then
+                    jumppower(tonumber(m_l:sub(4,string.len(m_l))))
+                elseif m_l:sub(1,7) == "respawn" or m_l:sub(1,5) == "reset" or m_l:sub(1,string.len(msg)) == "r" then
+                    respawn()
+                elseif m_l:sub(1,6) == "rejoin" then
+                    rejoin(game["PlaceId"])
+                elseif m_l:sub(1,7) == "airwalk" then
+                    airwalk()
+                elseif m_l:sub(1,8) == "autocash" or m_l:sub(1,string.len(msg)) == "ac" or m_l:sub(1,5) == "acash" then
+                    if bools["auto_cash"] == false then
+                        bools["auto_cash"] = true
+                    elseif bools["auto_cash"] == true then
+                        bools["auto_cash"] = false
+                    end
+                elseif m_l:sub(1,3) == "fly" then
+                    fly(false)
+                elseif m_l:sub(1,4) == "heal" then
+                    heal()
+                elseif m_l:sub(1,2) == "ps" or m_l:sub(1,6) == "pspace" then
+                    if bools["personal_space"] == false then
+                        bools["personal_space"] = true
+                    elseif bools["personal_space"] == true then
+                        bools["personal_space"] = false
+                    end
+                elseif m_l:sub(1,5) == "unfly" then
+                    fly(true)
+                elseif m_l:sub(1,6) == "noclip" then
+                    noclip(false)
+                elseif m_l:sub(1,4) == "clip" then
+                    noclip(true)
+                elseif m_l:sub(1,4) == "hide" then
+                    hide()
+                --[[
+                elseif m_l:sub(1,6) == "ainvis" then
+                    invis()
+                --]]
+                elseif m_l:sub(1,string.len(msg)) == "multiuzi" or m_l:sub(1,string.len(msg)) == "mu" then
+                    if bools["multi_uzi"] == false then
+                        bools["multi_uzi"] = true
+                        local hum = check_humanoid()
+                        if hum ~= nil then
+                            hum:UnequipTools()
+                            for _,v in next,LP.Backpack:GetChildren() do
+                                if v:IsA("Tool") and v.Name == "Uzi" then
+                                    v.Parent = LP.PlayerGui
+                                end
+                            end
+                        end
+                    elseif bools["multi_uzi"] == true then
+                        bools["multi_uzi"] = false
+                    end
+                elseif m_l:sub(1,5) == "kill " then
+                    local player = check_player(m_l:sub(6,string.len(m_l)))
+                    if player ~= nil and player ~= LP then
+                        kill(player)
+                    end
+                elseif m_l:sub(1,3) == "to " then
+                    local player = check_player(m_l:sub(4,string.len(m_l)))
+                    if player ~= nil and player ~= LP then
+                        tp(player)
+                    end
+                elseif m_l:sub(1,4) == "aim " then
+                    local player = check_player(m_l:sub(5,string.len(m_l)))
+                    if player ~= nil and player ~= LP then
+                        aim(player)
+                    end
+                elseif m_l:sub(1,5) == "view " then
+                    local player = check_player(m_l:sub(6,string.len(m_l)))
+                    if player ~= nil and player ~= LP then
+                        view(player)
+                    end
+                elseif m_l:sub(1,9) == "loopkill " then
+                    local player = check_player(m_l:sub(10,string.len(m_l)))
+                    if player ~= nil and player ~= LP then
+                        loopkill(player)
+                    else
+                        bools["loopkilling"] = false
+                    end
+                elseif m_l:sub(1,3) == "lk " then
+                    local player = check_player(m_l:sub(4,string.len(m_l)))
+                    if player ~= nil and player ~= LP then
+                        loopkill(player)
+                    else
+                        bools["loopkilling"] = false
+                    end
+                elseif m_l:sub(1,10) == "unloopkill" then
+                    bools["loopkilling"] = false
+                elseif m_l:sub(1,string.len(msg)) == "unview" then
+                    unview()
+                elseif m_l:sub(1,string.len(msg)) == "astomp" or m_l:sub(1,string.len(msg)) == "autostomp" then
+                    if bools["auto_stomp"] == true then
+                        bools["auto_stomp"] = false
+                    elseif bools["auto_stomp"] == false then
+                        bools["auto_stomp"] = true
+                    end
+                elseif m_l:sub(1,string.len(msg)) == "unaim" then
+                    bools["triggered"] = false
+                elseif m_l:sub(1,string.len(msg)) == "iesp" or m_l:sub(1,string.len(msg)) == "itemesp" then
+                    if bools["item_esp"] == false then
+                        bools["item_esp"] = true
+                    elseif bools["item_esp"] == true then
+                        bools["item_esp"] = false
+                        for _,v in next,workspace:GetChildren() do
+                            if v:IsA("Part") and v.Name == "RandomSpawner" then
+                                for _,z in next,v:GetDescendants() do
+                                    if z:IsA("BillboardGui") then
+                                        z:Destroy()
+                                    end
+                                end
+                            end
+                        end
+                    end
+                elseif m_l:sub(1,string.len(msg)) == "triggerbot" or m_l:sub(1,string.len(msg)) == "tb" then
+                    if bools["triggerbot"] == false then
+                        bools["triggerbot"] = true
+                    elseif bools["triggerbot"] == true then
+                        bools["triggerbot"] = false
+                    end
+                end
+            end
+        end)
+
+        UIS.InputBegan:Connect(function(yuh,yeet)
+            if yuh.KeyCode == Enum.KeyCode.LeftShift then
+                local hum = check_humanoid()
+                if hum ~= nil then
+                    hum.WalkSpeed = hum.WalkSpeed + 9
+                end
+            end
+            if not yeet then
+                if yuh.KeyCode == Enum.KeyCode.Quote and meme_bar_open == 1 then
+                    meme_bar_open = 3
+                    meme_bar:TweenSize(UDim2.new(1,0,0,25), "Out", "Quad", 0.2, false)
+                    meme_bar:TweenPosition(UDim2.new(0,0,0.5,-15), "Out", "Quad", 0.2, false)
+                    meme_bar:CaptureFocus()
+                    meme_bar.Transparency = 0.5
+                    meme_bar.Text = ""
+                    for i=1,25 do
+                        blur.Size = i/2
+                        HB:wait()
+                    end
+                    wait(0.1)
+                    meme_bar_open = 2
+            elseif yuh.KeyCode == Enum.KeyCode.LeftControl and bools["airwalk"] == true then
+                    bools["airwalk_offset"] = -0.5
+                elseif yuh.KeyCode == Enum.KeyCode.Space and bools["airwalk"] == true then
+                    bools["airwalk_offset"] = 0.5
+                elseif bools["fly"] == true then
+                    if yuh.KeyCode == Enum.KeyCode.W then
+                        keys["w"] = true
+                    elseif yuh.KeyCode == Enum.KeyCode.S then
+                        keys["s"] = true
+                    elseif yuh.KeyCode == Enum.KeyCode.D then
+                        keys["d"] = true
+                    elseif yuh.KeyCode == Enum.KeyCode.A then
+                        keys["a"] = true
+                    end
+                end
+            end
+        end)
+
+        UIS.InputEnded:Connect(function(yuh,yeet)
+            if yuh.KeyCode == Enum.KeyCode.LeftShift then
+                local hum = check_humanoid()
+                if hum ~= nil then
+                    hum.WalkSpeed = hum.WalkSpeed - 9
+                end
+            end
+            if not yeet then
+                if yuh.KeyCode == Enum.KeyCode.LeftControl and bools["airwalk"] == true then
+                    bools["airwalk_offset"] = 0
+                elseif yuh.KeyCode == Enum.KeyCode.Space and bools["airwalk"] == true then
+                    bools["airwalk_offset"] = 0
+                elseif bools["fly"] == true then
+                    if yuh.KeyCode == Enum.KeyCode.W then
+                        keys["w"] = false
+                    elseif yuh.KeyCode == Enum.KeyCode.S then
+                        keys["s"] = false
+                    elseif yuh.KeyCode == Enum.KeyCode.D then
+                        keys["d"] = false
+                    elseif yuh.KeyCode == Enum.KeyCode.A then
+                        keys["a"] = false
+                    end
+                end
+            end
+        end)
+
+        mouse.Button1Down:Connect(function()
+            local part = mouse.Target
+            if part ~= nil then
+                local locker = part.Parent:FindFirstChild("Locker")
+                local lock = part.Parent:FindFirstChild("Lock")
+                local click = part.Parent:FindFirstChild("Click")
+                if locker and lock and click then
+                    local C_D = lock:FindFirstChildOfClass("ClickDetector")
+                    local C_D_1 = click:FindFirstChildOfClass("ClickDetector")
+                    if C_D and C_D_1 then
+                        local C_D_R = C_D:FindFirstChildOfClass("RemoteEvent")
+                        local C_D_R_1 = C_D:FindFirstChildOfClass("RemoteEvent")
+                        if C_D_R and C_D_R_1 then
+                            if locker.Value == true then
+                                if C_D_R and C_D_R_1 then
+                                    C_D_R:FireServer()
+                                    C_D_R_1:FireServer()
+                                end
+                            else
+                                C_D_R_1:FireServer()
+                            end
+                        end
+                    end
+                end
+            end
+            if bools["multi_uzi"] == true then
+                for _,v in next,LP.PlayerGui:GetChildren() do
+                    if v:IsA("Tool") and v.Name == "Uzi" then
+                        local fire = v:FindFirstChild("Fire")
+                        if fire then
+                            v.Grip = CFrame.new(0,0,-6)
+                            v.Parent = LP.Backpack
+                            v.Parent = LP.Character
+                            fire:FireServer(mouse.Hit)
+                            v.Parent = LP.PlayerGui
+                        end
+                    end
+                end
+            end
+        end)
+
+        spawn(function()
+            while wait() do
+                local hum = check_humanoid()
+                if hum ~= nil then
+                    bools["walkspeed"] = hum.WalkSpeed
+                    bools["jumppower"] = hum.JumpPower
+                end
+                if bools["auto_stomp"] == true then
+                    stomp()
+                end
+                running_stuff()
+                if bools["personal_space"] == true then
+                    personal_space()
+                end
+            end
+        end)
+        spawn(function()
+            while wait(1) do
+                if bools["item_esp"] == true then
+                    item_esp_sorter()
+                end
+                for _,v in next,P:GetPlayers() do
+                    v.NameDisplayDistance = 100000 + wait()
+                    v.HealthDisplayDistance = 100000 + wait()
+                end
+                if bools["auto_cash"] == true then
+                    get_cash()
+                end
+            end
+        end)
+        print("DrPoppa Loaded")
